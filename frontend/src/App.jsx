@@ -12,6 +12,8 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [sort, setSort] = useState("date");
+  const [search, setSearch] = useState("");
 
   const fetchTasks = async () => {
     try {
@@ -26,6 +28,8 @@ function App() {
   };
 
   useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) setTasks(JSON.parse(savedTasks));
     fetchTasks();
   }, []);
 
@@ -48,7 +52,6 @@ function App() {
       await taskService.updateTask(id, data);
       setIsEditing(false);
       fetchTasks();
-      console.log("help");
     } catch (error) {
       console.log("failed to update task", error.message);
     }
@@ -72,10 +75,24 @@ function App() {
     }
   };
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "completed") return task.completed;
-    if (filter === "pending") return !task.completed;
-    return true;
+  const filteredTasks = tasks
+    .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
+    .filter((task) => {
+      if (filter === "completed") return task.completed;
+      if (filter === "pending") return !task.completed;
+      return true;
+    });
+
+  const sortedTasks = filteredTasks.sort((a, b) => {
+    if (sort === "createdAt")
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    if (sort === "priority") {
+      const order = { high: 0, medium: 1, low: 2 };
+      return order[a.priority] - order[b.priority];
+    }
+    if (sort === "title") {
+      return a.title.localeCompare(b.title);
+    }
   });
 
   return (
@@ -87,33 +104,42 @@ function App() {
         <div>
           <TaskFilter filter={filter} setFilter={setFilter} />
         </div>
-        <div>
-          <button
-            onClick={() => setIsAdding(!isAdding)}
-            className="addTask-button"
-          >
-            {isAdding ? "Cancel" : "Add Task"}
-          </button>
-          {isAdding && (
-            <EditModal
-              task={null}
-              onClose={() => setIsAdding(false)}
-              handleUpdate={handleUpdate}
-              handleAdd={handleAddTask}
-            />
-          )}
-        </div>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <option value="date">Sort by Date</option>
+          <option value="priority">Sort by Priority</option>
+          <option value="title">Sort by Title</option>
+        </select>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="addTask-button"
+        >
+          Add Task
+        </button>
       </div>
       <main className="content-area">
         <section className="carousel-view">
           <TaskList
-            tasks={filteredTasks}
+            tasks={sortedTasks}
             onDelete={handleDelete}
             onUpdate={handleEditClick}
             onToggle={handleToggle}
             isLoading={loading}
           />
         </section>
+        {isAdding && (
+          <EditModal
+            task={null}
+            onClose={() => setIsAdding(false)}
+            handleUpdate={handleUpdate}
+            handleAdd={handleAddTask}
+          />
+        )}
         {isEditing && (
           <EditModal
             task={selectedTask}

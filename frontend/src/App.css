@@ -48,16 +48,14 @@ body {
   padding: 3rem 0;
   margin-bottom: 2rem;
   overflow-x: hidden;
-
+  text-align: center;
 }
 
 .content-area {
   width: 100%;
   display: flex;
-  text-align: center;
   overflow-x: hidden;
 }
-
 
 @media (max-width: 768px) {
   .header h1 { font-size: 1.8rem; }
@@ -73,7 +71,6 @@ body {
 }
 
 select {
-  width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;

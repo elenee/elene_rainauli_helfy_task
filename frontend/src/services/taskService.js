@@ -4,6 +4,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const getTasks = async () => {
   const response = await axios.get(`${BASE_URL}/api/tasks`);
+  localStorage.setItem("tasks", JSON.stringify(response.data));
   return response.data;
 };
 
