@@ -1,121 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+import TaskList from "./components/TaskList";
+import taskService from "./services/taskService";
+import TaskForm from "./components/TaskForm";
+import TaskFilter from "./components/TaskFilter";
+import EditModal from "./components/EditModal";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const allTasks = await taskService.getTasks();
+      setTasks(allTasks);
+    } catch (error) {
+      console.log("failed to fetch tasks", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const handleAddTask = async (data) => {
+    try {
+      await taskService.addTask(data);
+      fetchTasks();
+    } catch (error) {
+      console.log("failed to add task", error.message);
+    }
+  };
+
+  const handleEditClick = (task) => {
+    setSelectedTask(task);
+    setIsEditing(true);
+  };
+
+  const handleUpdate = async (id, data) => {
+    try {
+      await taskService.updateTask(id, data);
+      setIsEditing(false);
+      fetchTasks();
+      console.log("help");
+    } catch (error) {
+      console.log("failed to update task", error.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await taskService.deleteTask(id);
+      fetchTasks();
+    } catch (error) {
+      console.log("failed to delete task", error.message);
+    }
+  };
+
+  const handleToggle = async (id) => {
+    try {
+      await taskService.toggleStatus(id);
+      await fetchTasks();
+    } catch (error) {
+      console.log("failed to change status task", error.message);
+    }
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "completed") return task.completed;
+    if (filter === "pending") return !task.completed;
+    return true;
+  });
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-wrapper">
+      <header className="header">
+        <h1>Task Manager</h1>
+        <div className="filter-container">
+          <TaskFilter filter={filter} setFilter={setFilter} />
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </header>
+      <main className="content-area">
+        <section className="carousel-view">
+          <TaskList
+            tasks={filteredTasks}
+            onDelete={handleDelete}
+            onUpdate={handleEditClick}
+            onToggle={handleToggle}
+            isLoading={loading}
+          />
+        </section>
+        <section className="form-view">
+          <div className="form-card">
+            <h2>Create New Task</h2>
+            <TaskForm handleAdd={handleAddTask} />
+          </div>
+        </section>
+        {isEditing && (
+          <EditModal
+            task={selectedTask}
+            onClose={() => {
+              setIsEditing(false);
+              setSelectedTask(null);
+            }}
+            handleUpdate={handleUpdate}
+          />
+        )}
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;

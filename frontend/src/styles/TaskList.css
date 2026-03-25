@@ -1,0 +1,26 @@
+.task-list {
+  display: flex;
+  width: max-content; 
+  gap: 20px;
+  padding: 20px;
+  animation: scrolling 20s linear infinite;
+}
+
+.task-list:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrolling {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.task-item {
+  flex-shrink: 0;
+  width: 300px;
+}
+
