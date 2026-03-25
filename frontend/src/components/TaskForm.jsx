@@ -48,6 +48,7 @@ const TaskForm = ({ task, handleAdd, handleUpdate, onClose }) => {
           description: "",
           priority: "",
         });
+        if (onClose) onClose();
       }
 
       setError({

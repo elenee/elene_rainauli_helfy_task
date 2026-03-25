@@ -1,12 +1,16 @@
-.task-list {
-  display: flex;
-  width: max-content; 
-  gap: 20px;
-  padding: 20px;
-  animation: scrolling 20s linear infinite;
+.carousel-wrapper {
+  overflow: hidden;
+  width: 100%;
 }
 
-.task-list:hover {
+.task-list {
+  display: flex;
+  gap: 20px;
+   width: max-content;
+  padding: 20px;
+}
+
+.task-list.carousel-active:hover {
   animation-play-state: paused;
 }
 
@@ -19,8 +23,6 @@
   }
 }
 
-.task-item {
-  flex-shrink: 0;
-  width: 300px;
+.task-list.carousel-active {
+  animation: scrolling 10s linear infinite;
 }
-

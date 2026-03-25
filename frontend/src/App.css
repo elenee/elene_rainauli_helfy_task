@@ -1,16 +1,14 @@
 :root {
   --bg-color: #f8fafc;
-  --primary-color: #4f46e5;
   --text-main: #1e293b;
-  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-main);
   margin: 0;
-  overflow: hidden;
-
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 .app-wrapper {
@@ -23,52 +21,65 @@ body {
 
 .header {
   padding: 2rem 1rem;
-  text-align: center;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 .header h1 {
   margin: 1.5rem;
   font-size: 2.5rem;
-  color: var(--primary-color);
   font-weight: 800;
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (max-width:768px) {
+  .flex {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .carousel-view {
   width: 100%;
   padding: 3rem 0;
-  background: #f1f5f9;
   margin-bottom: 2rem;
+  overflow-x: hidden;
+
 }
 
 .content-area {
   width: 100%;
-}
-
-.form-view {
-  max-width: 600px;
-  margin: 0 auto 4rem auto;
-  padding: 0 1rem;
-  width: 100%;
-}
-
-.form-card {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: var(--card-shadow);
-  border: 1px solid #f1f5f9;
-}
-
-.form-card h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
+  display: flex;
   text-align: center;
+  overflow-x: hidden;
 }
+
 
 @media (max-width: 768px) {
   .header h1 { font-size: 1.8rem; }
   .form-card { padding: 1.5rem; }
+}
+
+.addTask-button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: rgb(125, 222, 170);
+}
+
+select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }

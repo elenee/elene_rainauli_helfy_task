@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import TaskList from "./components/TaskList";
 import taskService from "./services/taskService";
-import TaskForm from "./components/TaskForm";
 import TaskFilter from "./components/TaskFilter";
 import EditModal from "./components/EditModal";
+import "./App.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +11,7 @@ function App() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   const fetchTasks = async () => {
     try {
@@ -81,10 +82,28 @@ function App() {
     <div className="app-wrapper">
       <header className="header">
         <h1>Task Manager</h1>
-        <div className="filter-container">
+      </header>
+      <div className="flex">
+        <div>
           <TaskFilter filter={filter} setFilter={setFilter} />
         </div>
-      </header>
+        <div>
+          <button
+            onClick={() => setIsAdding(!isAdding)}
+            className="addTask-button"
+          >
+            {isAdding ? "Cancel" : "Add Task"}
+          </button>
+          {isAdding && (
+            <EditModal
+              task={null}
+              onClose={() => setIsAdding(false)}
+              handleUpdate={handleUpdate}
+              handleAdd={handleAddTask}
+            />
+          )}
+        </div>
+      </div>
       <main className="content-area">
         <section className="carousel-view">
           <TaskList
@@ -94,12 +113,6 @@ function App() {
             onToggle={handleToggle}
             isLoading={loading}
           />
-        </section>
-        <section className="form-view">
-          <div className="form-card">
-            <h2>Create New Task</h2>
-            <TaskForm handleAdd={handleAddTask} />
-          </div>
         </section>
         {isEditing && (
           <EditModal

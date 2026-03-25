@@ -8,6 +8,7 @@ const TaskItem = ({ task, onDelete, onToggle, onUpdate }) => {
       <p>{task.description}</p>
       <p className={`priority priority-${task.priority}`}>{task.priority}</p>
       <p>{task.completed ? "completed" : "pending"}</p>
+      <p>{new Date(task.createdAt).toLocaleDateString()}</p>
       <button onClick={() => onToggle(task.id)}>
         {task.completed ? "Mark Incomplete" : "Mark Completed"}
       </button>
