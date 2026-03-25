@@ -111,7 +111,7 @@ function App() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="date">Sort by Date</option>
+          <option value="createdAt">Sort by Date</option>
           <option value="priority">Sort by Priority</option>
           <option value="title">Sort by Title</option>
         </select>

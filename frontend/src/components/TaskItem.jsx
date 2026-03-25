@@ -13,7 +13,13 @@ const TaskItem = ({ task, onDelete, onToggle, onUpdate }) => {
         {task.completed ? "Mark Incomplete" : "Mark Completed"}
       </button>
       <button onClick={() => onUpdate(task)}>Update</button>
-      <button onClick={() => onDelete(task.id)}>Delete</button>
+      <button
+        onClick={() => {
+          if (window.confirm("Delete this task?")) onDelete(task.id);
+        }}
+      >
+        Delete
+      </button>
     </div>
   );
 };
