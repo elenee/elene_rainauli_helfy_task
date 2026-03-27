@@ -19,9 +19,10 @@ function App() {
     try {
       setLoading(true);
       const allTasks = await taskService.getTasks();
-      setTasks(allTasks);
+      setTasks(allTasks || []);
     } catch (error) {
       console.log("failed to fetch tasks", error.message);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
@@ -29,7 +30,7 @@ function App() {
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) setTasks(JSON.parse(savedTasks));
+    if (savedTasks) setTasks(JSON.parse(savedTasks) || []);
     fetchTasks();
   }, []);
 

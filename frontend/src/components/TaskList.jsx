@@ -11,7 +11,7 @@ const TaskList = ({ tasks, onDelete, onUpdate, onToggle, isLoading }) => {
   }, [tasks]);
 
   if (isLoading) return <p>Loading ...</p>;
-  if (tasks.length === 0) return <p>no tasks yet</p>;
+  if (!tasks || tasks.length === 0) return <p>no tasks yet</p>;
 
   const displayTasks = shouldCarousel ? [...tasks, ...tasks] : tasks;
 
